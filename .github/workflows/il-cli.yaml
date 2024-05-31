@@ -1,5 +1,4 @@
 name: Run IL-CLI
-
 on:
   push:
     branches:
@@ -11,15 +10,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Pull docker image
         run: docker pull castimaging/carl-java-cli:alpha
-
       - name: Run IL-CLI
-        env:
-          APP_API_KEY: ${{ secrets.IMAGING_CLOUD_API_KEY }}
-        run: |
-         cd ${{ github.workspace }}
-          git_folder=$(basename "$(git rev-parse --show-toplevel)") 
-          # The git folder name is mapped to the project name
-          docker run -e IMAGING_CLOUD_API_KEY=${{ secrets.IMAGING_CLOUD_API_KEY }} -v $(pwd):/home/carl/extras/source castimaging/carl-java-cli:alpha /home/carl/extras/run.sh "$git_folder-${{github.run_id}}-${{github.run_number}}"
+        run: | 
+          cd ${{github.workspace}}
+          docker run -e IMAGING_CLOUD_API_KEY=${{secrets.IMAGING_CLOUD_API_KEY}} -v $(pwd):/home/carl/extras/source castimaging/carl-java-cli:alpha "${{github.event.repository.name}}-${{github.run_id}}-${{github.run_number}}"
